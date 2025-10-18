@@ -149,12 +149,12 @@ pub enum CardSet {
     PromotionalPack,
 }
 
-impl ToString for CardSet {
-    fn to_string(&self) -> String {
-        match &self {
-            CardSet::Base => "Base Game".to_string(),
-            CardSet::SenseiPath => "Sensei's Path".to_string(),
-            CardSet::PromotionalPack => "Promotional Cards".to_string(),
+impl fmt::Display for CardSet {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            CardSet::Base => write!(f, "Base Game"),
+            CardSet::SenseiPath => write!(f, "Sensei's Path"),
+            CardSet::PromotionalPack => write!(f, "Promotional Cards"),
         }
     }
 }
@@ -294,21 +294,12 @@ impl From<&GameState> for GameView {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Default, Serialize, Deserialize, Clone, Debug)]
 pub struct GameMeta {
     #[serde(default)]
     pub build: String,
     #[serde(default)]
     pub uid: String,
-}
-
-impl GameMeta {
-    pub fn blank() -> GameMeta {
-        return GameMeta {
-            build: "".to_string(),
-            uid: "".to_string(),
-        };
-    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]

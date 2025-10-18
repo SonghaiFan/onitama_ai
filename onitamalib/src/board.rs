@@ -5,7 +5,7 @@ use rand::prelude::*;
 use crate::models::{Board, Card, GameSquare, GameState, Move, Player, Point};
 
 impl Board {
-    pub fn try_move(self: &Board, game_move: Move) -> Result<GameState, String> {
+    pub fn try_move(&self, game_move: Move) -> Result<GameState, String> {
         let (blue_king, blue_pawns, blue_hand, red_king, red_pawns, red_hand, spare_card, turn) =
             match self {
                 Board {
@@ -123,18 +123,18 @@ impl Board {
             },
         };
         if dst == *opponent_king {
-            return Ok(GameState::Finished {
+            Ok(GameState::Finished {
                 winner: *turn,
                 board,
-            });
-        }
-        if moving_king && dst == goal_square {
-            return Ok(GameState::Finished {
+            })
+        } else if moving_king && dst == goal_square {
+            Ok(GameState::Finished {
                 winner: *turn,
                 board,
-            });
+            })
+        } else {
+            Ok(GameState::Playing { board })
         }
-        return Ok(GameState::Playing { board });
     }
     fn new_from_cards(cards: Vec<Card>) -> Board {
         let mut cards = cards.into_iter();
@@ -157,18 +157,17 @@ impl Board {
         cards.shuffle(&mut rng);
         Board::new_from_cards(cards)
     }
-    pub fn new_from_card_sets(card_sets: &Vec<CardSet>) -> Board {
-        match card_sets.len() {
-            0 => Board::new(),
-            _ => {
-                let mut cards = Vec::new();
-                for set in card_sets {
-                    cards.append(&mut set.cards());
-                }
-                let mut rng = thread_rng();
-                cards.shuffle(&mut rng);
-                Board::new_from_cards(cards)
+    pub fn new_from_card_sets(card_sets: &[CardSet]) -> Board {
+        if card_sets.is_empty() {
+            Board::new()
+        } else {
+            let mut cards = Vec::new();
+            for set in card_sets {
+                cards.append(&mut set.cards());
             }
+            let mut rng = thread_rng();
+            cards.shuffle(&mut rng);
+            Board::new_from_cards(cards)
         }
     }
     pub fn to_grid(&self) -> [[GameSquare; 5]; 5] {
@@ -183,7 +182,7 @@ impl Board {
         grid[y as usize][x as usize] = GameSquare::RedKing;
         let Point { x, y } = self.blue_king;
         grid[y as usize][x as usize] = GameSquare::BlueKing;
-        return grid;
+        grid
     }
     pub fn can_move(&self) -> bool {
         let player_pieces = self.player_pieces();
@@ -201,7 +200,7 @@ impl Board {
                 }
             }
         }
-        return false;
+        false
     }
 }
 
@@ -268,13 +267,13 @@ impl Board {
         let mut pieces: [Option<Point>; 5] = [None; 5];
         pieces[1..].copy_from_slice(&*self.player_pawns());
         pieces[0] = Some(*self.player_king());
-        return pieces;
+        pieces
     }
     pub fn opponent_pieces(&self) -> [Option<Point>; 5] {
         let mut pieces: [Option<Point>; 5] = [None; 5];
         pieces[1..].copy_from_slice(&*self.opponent_pawns());
         pieces[0] = Some(*self.opponent_king());
-        return pieces;
+        pieces
     }
 }
 
@@ -283,13 +282,13 @@ impl Board {
         let mut pieces: [Option<Point>; 5] = [None; 5];
         pieces[..4].copy_from_slice(self.red_pawns.as_ref());
         pieces[4] = Some(self.red_king);
-        return pieces;
+        pieces
     }
     pub fn blue_pieces(&self) -> [Option<Point>; 5] {
         let mut pieces: [Option<Point>; 5] = [None; 5];
         pieces[..4].copy_from_slice(self.blue_pawns.as_ref());
         pieces[4] = Some(self.blue_king);
-        return pieces;
+        pieces
     }
 }
 

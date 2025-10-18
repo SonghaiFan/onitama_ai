@@ -1,13 +1,15 @@
+#[cfg(feature = "benchmark")]
 use indicatif::ProgressBar;
 use instant::Duration;
 
-use crate::{alphabeta, minimax, GameState};
+use crate::{alphabeta, minimax};
 
 use super::utils;
 
 const SHARED_DEPTH: u16 = 3;
 
 #[test]
+#[cfg(feature = "benchmark")]
 fn alphabeta_equivalent_to_minimax() {
     let test_states = utils::generate_test_states();
     let bar = ProgressBar::new(100);
@@ -27,6 +29,7 @@ fn alphabeta_equivalent_to_minimax() {
 }
 
 #[test]
+#[cfg(feature = "benchmark")]
 fn alphabeta_benchmark() {
     let duration = Duration::from_millis(100);
     let bar = ProgressBar::new(100);

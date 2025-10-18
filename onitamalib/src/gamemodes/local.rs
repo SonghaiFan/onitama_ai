@@ -36,7 +36,7 @@ impl LocalGame {
         };
         let meta = match serde_wasm_bindgen::from_value::<GameMeta>(meta) {
             Ok(meta) => meta,
-            Err(_) => GameMeta::blank(),
+            Err(_) => Default::default(),
         };
         let game = LocalGame {
             game,

@@ -23,7 +23,7 @@ impl Board {
                 }
             }
         }
-        if moves.len() > 0 {
+        if !moves.is_empty() {
             let opponent_pieces = self.opponent_pieces();
             let key = |game_move: &Move| match game_move {
                 Move::Move { dst, .. } => match opponent_pieces.contains(&Some(*dst)) {
@@ -33,14 +33,14 @@ impl Board {
                 Move::Discard { .. } => 0,
             };
             moves.sort_by_cached_key(key);
-            return moves;
+            moves
+        } else {
+            // No moves, have to discard
+            self.player_hand()
+                .iter()
+                .map(|card| Move::Discard { card: *card })
+                .collect()
         }
-        // No moves, have to discard
-        return self
-            .player_hand()
-            .iter()
-            .map(|card| Move::Discard { card: *card })
-            .collect();
     }
     pub fn random_legal_move<R: Rng>(&self, rng: &mut R) -> Move {
         let mut cards = *self.player_hand();
@@ -63,6 +63,6 @@ impl Board {
                 }
             }
         }
-        return Move::Discard { card: cards[0] };
+        Move::Discard { card: cards[0] }
     }
 }

@@ -1,9 +1,11 @@
 use super::utils;
 use crate::{montecarlo, GameState};
+#[cfg(feature = "benchmark")]
 use indicatif::ProgressBar;
 use instant::Duration;
 
 #[test]
+#[cfg(feature = "benchmark")]
 fn montecarlo_benchmark() {
     let duration = Duration::from_millis(100);
     let bar = ProgressBar::new(100);

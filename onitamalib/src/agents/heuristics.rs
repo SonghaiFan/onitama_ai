@@ -36,6 +36,6 @@ impl GameState {
         };
         let red_count = board.red_pawns.iter().fold(0, count_pieces);
         let blue_count = board.blue_pawns.iter().fold(0, count_pieces);
-        return value_from_pawn_count(red_count) - value_from_pawn_count(blue_count);
+        value_from_pawn_count(red_count) - value_from_pawn_count(blue_count)
     }
 }
